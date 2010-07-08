@@ -1,0 +1,113 @@
+Recess Framework Model Validations
+
+Hello! Thank you for your interest in my Model Validations Plugin for
+the Recess PHP Framework.
+
+How to Install:
+---------------
+
+Place the "ValidationPlugin/" directory into your Recess installation's
+"plugins/" directory.
+
+Update your Recess application's class file. Require the "ValidationPlugin"
+plugin. Then register the ValidationPlugin with your application. Ultimately,
+your application class file should look something like this:
+
+<?php
+Library::import('recess.framework.Application');
+Library::import('ValidationPlugin.ValidationPlugin');
+
+class MyApplication extends Application {
+	public function __construct() {
+		$this->name = 'My Cool Application';
+		$this->viewsDir = $_ENV['dir.apps'] . 'myapp/templates/';	
+		$this->modelsPrefix = 'myapp.models.';
+		$this->controllersPrefix = 'myapp.controllers.';
+		$this->routingPrefix = '/';
+		$this->assetUrl = 'recess/recess/apps/tools/public/';
+		$this->plugins = array(
+			new ValidationPlugin()
+		);
+	}
+}
+?>
+
+Usage:
+------
+
+Once you have installed the Model Validations plugin, you can use the
+validation annotations below on your Model classes. You can use as many 
+annotations as you want on the same model. You can use the same fields in 
+different annotations. Basically, this is a simple implementation of the 
+Rails validation classes.
+
+If any validation fails, the affected Model will not save, insert, or update
+(whatever you specified in the On: key), and the affected Model will be 
+assigned an $errors property (an array of strings) containing error messages.
+
+The available validation annotations are:
+
+/**
+ * !ValidatesPresenceOf Fields: (title, author), On: (save, insert, update)
+ */
+class Book extends Model {
+   	public $title;
+	public $author;
+}
+
+/**
+ * !ValidatesNumericalityOf Fields: (pageCount), On: (save, insert, update)
+ */
+class Book extends Model {
+   	public $pageCount;
+}
+
+/**
+ * !ValidatesSizeOf Fields: (pageCount), On: (save, insert, update), Min: 1, Max: 900
+ */
+class Book extends Model {
+   	public $pageCount;
+}
+
+/**
+ * !ValidatesInclusionOf Fields: (genre), On: (save, insert, update), In: (action, adventure)
+ */
+class Book extends Model {
+   	public $genre;
+}
+
+/**
+ * !ValidatesExclusionOf Fields: (genre), On: (save, insert, update), From: (action, adventure)
+ */
+class Book extends Model {
+   	public $genre;
+}
+
+/**
+ * !ValidatesFormatOf Fields: (isbn), On: (save, insert, update), With: @^[a-zA-Z0-9]+$@
+ */
+class Book extends Model {
+   	public $isbn;
+}
+
+Example Controller Code:
+------------------------
+
+/**
+ * !Route POST, books
+ */
+function create() {
+	$this->book = new Book($this->request->data('book'));
+	if( $this->book->save() ) {
+		//Success
+	} else {
+		$this->errors = $this->book->errors;
+		return $this->ok('submit_form');
+	}
+}
+
+Gotchas
+-------
+
+Currently you are stuck with default error messages. I do intend to add a "Message:"
+key to each Validation annotation so you can customize error messages.
