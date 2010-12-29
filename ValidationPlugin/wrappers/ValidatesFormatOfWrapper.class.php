@@ -37,6 +37,7 @@
  *
  * @param Model $object The Model being validated
  * @param array $fields An array of field names to be validated
+ * @param string $message The error message to display if validation fails
  * @param string $with A REGEX pattern
  * @return void
  * @author Josh Lockhart <info@joshlockhart.com>
@@ -44,10 +45,10 @@
  */
 class ValidatesFormatOfWrapper extends ValidatesWrapper {
 	
-	public static function validate( $object, $fields, $with ) {
+	public static function validate( $object, $fields, $message, $with ) {
 		foreach( $fields as $fieldName ) {
 			if( isset($object->$fieldName) && !preg_match($with, $object->$fieldName) ) {
-				$object->errors[] = Inflector::toProperCaps($fieldName) . " does not match $with.";
+				$object->errors[] = Inflector::toProperCaps($fieldName) . ' ' . $message;
 			}
 		}
 	}

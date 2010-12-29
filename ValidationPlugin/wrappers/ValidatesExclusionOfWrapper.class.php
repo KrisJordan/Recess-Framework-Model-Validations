@@ -38,6 +38,7 @@
  *
  * @param Model $object The Model being validated
  * @param array $fields An array of field names to be validated
+ * @param string $message The error message to display if validation fails
  * @param array $from An array of black-list words
  * @return void
  * @author Josh Lockhart <info@joshlockhart.com>
@@ -48,7 +49,7 @@ class ValidatesExclusionOfWrapper extends ValidatesWrapper {
 	public static function validate( $object, $fields, $message, $from ) {
 		foreach( $fields as $fieldName ) {
 			if( isset($object->$fieldName) && in_array($object->$fieldName, $from) ) {
-				$object->errors[] = Inflector::toProperCaps($fieldName) . $message;
+				$object->errors[] = Inflector::toProperCaps($fieldName) . ' ' . $message;
 			}
 		}
 	}

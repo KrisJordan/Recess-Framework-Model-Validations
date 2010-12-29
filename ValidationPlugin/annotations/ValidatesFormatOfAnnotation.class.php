@@ -61,13 +61,18 @@ Library::import('ValidationPlugin.wrappers.ValidatesFormatOfWrapper');
 // - Accepts a REGEX pattern (ie. what you would pass as the first parameter of
 //   preg_match). Be sure you also include pattern delimiters!
 //
+// Message:
+// - This field is optional
+// - Accepts a string value
+// - Default "is an invalid format"
+//
 // @author Josh Lockhart <info@joshlockhart.com>
 // @since Version 1.0
 //
 class ValidatesFormatOfAnnotation extends ValidatesAnnotation {
 		
 	public function usage() {
-		return '!ValidatesFormatOf Fields: (one, two, three), On: (insert, update), With: \d{1,2}';		
+		return '!ValidatesFormatOf Fields: (one, two, three), On: (insert, update), With: \d{1,2}, Message: "is an invalid format"';		
 	}
 	
 	protected function validate($class) {
@@ -82,7 +87,8 @@ class ValidatesFormatOfAnnotation extends ValidatesAnnotation {
 		foreach( $validateMethods as $method ) {
 			$method = strtolower($method);
 			if( in_array($method, $this->validMethods) ) {
-				$descriptor->addWrapper($method, new ValidatesWrapper(array('ValidatesFormatOfWrapper::validate', array($this->fields, $this->with))));
+				$message = ( isset($this->message) ) ? $this->message : 'is an invalid format';
+				$descriptor->addWrapper($method, new ValidatesWrapper(array('ValidatesFormatOfWrapper::validate', array($this->fields, $message, $this->with))));
 			}
 		}
 		return $descriptor;
