@@ -42,7 +42,7 @@ Library::import('ValidationPlugin.wrappers.ValidatesExclusionOfWrapper');
 // USAGE:
 // 
 // /**
-//  * !ValidatesExclusionOf Fields: (genre), On: (save, insert, update, delete), From: (horror, romance)
+//  * !ValidatesExclusionOf Fields: (genre), On: (save, insert, update, delete), From: (horror, romance), Message: (is not an acceptable value)
 //  */
 // class Book extends Model {
 // 		public $genre;
@@ -60,18 +60,23 @@ Library::import('ValidationPlugin.wrappers.ValidatesExclusionOfWrapper');
 // - This key is required
 // - Accepts a comma delimited list of black-list values
 //
+// Message:
+// - This key is optional
+// - Accepts a string
+// - Default is "is not an acceptable value"
+//
 // @author Josh Lockhart <info@joshlockhart.com>
 // @since Version 1.0
 //
 class ValidatesExclusionOfAnnotation extends ValidatesAnnotation {
-		
+	
 	public function usage() {
-		return '!ValidatesExclusionOf Fields: (category), On: (insert, update), From: (cakes, pies, candies)';		
+		return '!ValidatesExclusionOf Fields: (category), On: (insert, update), From: (cakes, pies, candies), Message: (is an excluded value)';		
 	}
 	
 	protected function validate($class) {
 		$this->acceptsNoKeylessValues();
-		$this->acceptedKeys(array('fields','on', 'from'));
+		$this->acceptedKeys(array('fields','on', 'from', 'message'));
 		$this->requiredKeys(array('fields', 'from'));
 		$this->validOnSubclassesOf($class,'Model');
 	}
@@ -81,7 +86,8 @@ class ValidatesExclusionOfAnnotation extends ValidatesAnnotation {
 		foreach( $validateMethods as $method ) {
 			$method = strtolower($method);
 			if( in_array($method, $this->validMethods) ) {
-				$descriptor->addWrapper($method, new ValidatesWrapper(array('ValidatesExclusionOfWrapper::validate', array($this->fields, $this->from))));
+				$message = ( isset($this->message) ) ? $this->message : 'is not an acceptable value';
+				$descriptor->addWrapper($method, new ValidatesWrapper(array('ValidatesExclusionOfWrapper::validate', array($this->fields, $message, $this->from))));
 			}
 		}
 		return $descriptor;

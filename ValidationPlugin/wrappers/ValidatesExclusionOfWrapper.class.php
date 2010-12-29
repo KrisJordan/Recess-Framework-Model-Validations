@@ -45,10 +45,10 @@
  */
 class ValidatesExclusionOfWrapper extends ValidatesWrapper {
 	
-	public static function validate( $object, $fields, $from ) {
+	public static function validate( $object, $fields, $message, $from ) {
 		foreach( $fields as $fieldName ) {
 			if( isset($object->$fieldName) && in_array($object->$fieldName, $from) ) {
-				$object->errors[] = Inflector::toProperCaps($fieldName) . " must not be one of: " . implode(', ', $from);
+				$object->errors[] = Inflector::toProperCaps($fieldName) . $message;
 			}
 		}
 	}
