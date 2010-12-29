@@ -82,7 +82,7 @@ class ValidatesWrapper implements IWrapper {
 	public static function labelForObjectProperty($object, $field) {
 		$descriptor = Model::getDescriptor(get_class($object));
 		$property = isset($descriptor->properties[$field]) ? $descriptor->properties[$field] : new Object();
-		return isset($property->label) ? $property->label : $field;
+		return isset($property->label) ? $property->label : Inflector::toProperCaps($field);
 	}
 }
 

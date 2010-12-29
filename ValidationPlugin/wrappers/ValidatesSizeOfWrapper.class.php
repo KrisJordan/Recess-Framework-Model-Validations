@@ -53,7 +53,7 @@ class ValidatesSizeOfWrapper extends ValidatesWrapper {
 			if( isset($object->$fieldName) && ( is_string($object->$fieldName) || is_numeric($object->$fieldName) ) ) {
 				$length = is_string($object->$fieldName) ? strlen($object->$fieldName) : $object->$fieldName;
 				if( ( !is_null($min) && $length < intval($min) ) || ( !is_null($max) && $length > intval($max) ) ) {
-					$object->errors[] = Inflector::toProperCaps(self::labelForObjectProperty($object, $fieldName)) . ' ' . $message;
+					$object->errors[] = self::labelForObjectProperty($object, $fieldName) . ' ' . $message;
 				}
 			}
 		}
