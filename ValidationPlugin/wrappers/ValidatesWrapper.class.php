@@ -53,7 +53,9 @@ class ValidatesWrapper implements IWrapper {
 	}
 	
 	public function before( $object, &$args ) {
-		$object->errors = array();
+		if ( !isset($object->errors) || !is_array($object->errors) ) {
+			$object->errors = array();
+		}
 		foreach( $this->validations as $validation ) {
 			array_unshift($validation[1], $object);
 			$errors = call_user_func_array($validation[0], $validation[1]);
