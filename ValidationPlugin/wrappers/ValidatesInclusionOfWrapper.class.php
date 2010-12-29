@@ -49,7 +49,7 @@ class ValidatesInclusionOfWrapper extends ValidatesWrapper {
 	public static function validate( $object, $fields, $message, $in ) {
 		foreach( $fields as $fieldName ) {
 			if( isset($object->$fieldName) && !in_array($object->$fieldName, $in) ) {
-				$object->errors[] = Inflector::toProperCaps($fieldName) . ' ' . $message;
+				$object->errors[] = Inflector::toProperCaps(self::labelForObjectProperty($object, $fieldName)) . ' ' . $message;
 			}
 		}
 	}

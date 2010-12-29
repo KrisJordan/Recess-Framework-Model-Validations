@@ -30,35 +30,32 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/**
- * Validates Size Of
- *
- * This wrapper ensures each field value is an expected size (inclusive).
- * Although both $min and $max keys are optional, at least one of them
- * should be provided.
- *
- * @param Model $object The Model being validated
- * @param array $fields An array of field names to be validated
- * @param string $message The error message to display if validation fails
- * @param int $min The minimum size (optional)
- * @param int $max The maximum size (optional)
- * @return void
- * @author Josh Lockhart <info@joshlockhart.com>
- * @since Version 1.0
- */
-class ValidatesSizeOfWrapper extends ValidatesWrapper {
+Library::import('recess.lang.Annotation');
+
+class LabelAnnotation extends Annotation {
+
+	public function isFor() {
+		return Annotation::FOR_PROPERTY;
+	}
 	
-	public static function validate( $object, $fields, $message, $min = null, $max = null ) {
-		foreach( $fields as $fieldName ) {
-			if( isset($object->$fieldName) && ( is_string($object->$fieldName) || is_numeric($object->$fieldName) ) ) {
-				$length = is_string($object->$fieldName) ? strlen($object->$fieldName) : $object->$fieldName;
-				if( ( !is_null($min) && $length < intval($min) ) || ( !is_null($max) && $length > intval($max) ) ) {
-					$object->errors[] = Inflector::toProperCaps(self::labelForObjectProperty($object, $fieldName)) . ' ' . $message;
-				}
-			}
+	public function usage() {
+		return '!Label "Column Label"';		
+	}
+	
+	public function expand($class, $reflection, $descriptor) {
+		$propertyName = $reflection->getName();
+		if ( isset($descriptor->properties[$propertyName]) ) {
+			$property = &$descriptor->properties[$propertyName];
+			$property->label = (string)$this->values[0];
 		}
 	}
 	
+	protected function validate($class) {
+		$this->exactParameterCount(1);
+		$this->acceptsNoKeyedValues();
+		$this->validOnSubclassesOf($class,'Model');
+	}
+
 }
 
 ?>

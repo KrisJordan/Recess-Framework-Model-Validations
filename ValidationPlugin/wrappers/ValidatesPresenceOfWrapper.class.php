@@ -47,7 +47,7 @@ class ValidatesPresenceOfWrapper extends ValidatesWrapper {
 	public static function validate( $object, $fields, $message ) {
 		foreach( $fields as $fieldName ) {
 			if( !isset($object->$fieldName) || empty($object->$fieldName) ) {
-				$object->errors[] = Inflector::toProperCaps($fieldName) . ' ' . $message;
+				$object->errors[] = self::labelForObjectProperty($object, $fieldName) . ' ' . $message;
 			}
 		}
 	}

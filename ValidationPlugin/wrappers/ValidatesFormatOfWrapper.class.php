@@ -48,7 +48,7 @@ class ValidatesFormatOfWrapper extends ValidatesWrapper {
 	public static function validate( $object, $fields, $message, $with ) {
 		foreach( $fields as $fieldName ) {
 			if( isset($object->$fieldName) && !preg_match($with, $object->$fieldName) ) {
-				$object->errors[] = Inflector::toProperCaps($fieldName) . ' ' . $message;
+				$object->errors[] = Inflector::toProperCaps(self::labelForObjectProperty($object, $fieldName)) . ' ' . $message;
 			}
 		}
 	}

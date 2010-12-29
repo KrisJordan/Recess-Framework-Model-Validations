@@ -38,6 +38,7 @@ Library::import('ValidationPlugin.annotations.ValidatesSizeOfAnnotation');
 Library::import('ValidationPlugin.annotations.ValidatesFormatOfAnnotation');
 Library::import('ValidationPlugin.annotations.ValidatesInclusionOfAnnotation');
 Library::import('ValidationPlugin.annotations.ValidatesExclusionOfAnnotation');
+Library::import('ValidationPlugin.annotations.LabelAnnotation');
 
 /**
  * Validation Plugin
@@ -45,12 +46,6 @@ Library::import('ValidationPlugin.annotations.ValidatesExclusionOfAnnotation');
  * @author Josh Lockhart <info@joshlockhart.com>
  * @since Version 1.0
  */
-class ValidationPlugin extends Plugin {
-	
-	function init( Application $app ) {
-		//Do nothing. We only need to import the annotations and wrappers.
-	}
-	
-}
+class ValidationPlugin {}
 
 ?>
