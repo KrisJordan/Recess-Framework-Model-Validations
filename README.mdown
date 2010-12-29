@@ -1,0 +1,189 @@
+# Recess Framework Model Validations
+
+Hello! Thank you for your interest in my Model Validations Plugin for the Recess PHP Framework. This plugin is released under the MIT public license.
+
+## How to Install
+
+Place the `ValidationPlugin/` directory into your Recess installation's `plugins/` directory.
+
+Update your Recess application's class file. Require the `ValidationPlugin` plugin. Then register the `ValidationPlugin` with your application. Ultimately, your application class file should look something like this:
+
+	<?php
+	Library::import('recess.framework.Application');
+	Library::import('ValidationPlugin.ValidationPlugin');
+
+	class MyApplication extends Application {
+		public function __construct() {
+			$this->name = 'My Cool Application';
+			$this->viewsDir = $_ENV['dir.apps'] . 'myapp/templates/';	
+			$this->modelsPrefix = 'myapp.models.';
+			$this->controllersPrefix = 'myapp.controllers.';
+			$this->routingPrefix = '/';
+			$this->assetUrl = 'recess/recess/apps/tools/public/';
+			$this->plugins = array(
+				new ValidationPlugin()
+			);
+		}
+	}
+	?>
+
+## Usage
+
+Once you have installed the Model Validations plugin, you can use the validation annotations below on your Model classes. You can use as many annotations as you want on the same model. You can use the same fields in different annotations. Basically, this is a simple implementation of the Rails validation classes.
+
+If any validation fails, the affected Model will not save, insert, or update (whatever you specified in the On: key), and the affected Model will be assigned an $errors property (an array of strings) containing error messages.
+
+### Validates Presence Of
+
+	/**
+	 * !ValidatesPresenceOf Fields: (title, author), On: (save, insert, update), Message: "is required"
+	 */
+	class Book extends Model {
+
+		/**
+		 * !Label "Book Title"
+		 */
+	   	public $title;
+
+		/**
+		 * !Label "Book Author"
+		 */
+		public $author;
+	}
+
+### Validates Numericality Of
+
+	/**
+	 * !ValidatesNumericalityOf Fields: (pageCount), On: (save, insert, update), Message: "must be numeric"
+	 */
+	class Book extends Model {
+
+		/**
+		 * !Label "Page Count"
+		 */
+	   	public $pageCount;
+
+	}
+
+### Validates Size Of
+
+	/**
+	 * !ValidatesSizeOf Fields: (pageCount), On: (save, insert, update), Min: 1, Max: 900, Message: "is not the correct length"
+	 */
+	class Book extends Model {
+
+		/**
+		 * !Label "Page Count"
+		 */
+	   	public $pageCount;
+
+	}
+
+### Validates Inclusion Of
+
+	/**
+	 * !ValidatesInclusionOf Fields: (genre), On: (save, insert, update), In: (action, adventure), Message: "is not an acceptable value"
+	 */
+	class Book extends Model {
+
+		/**
+		 * !Label "Book Genre"
+		 */
+	   	public $genre;
+
+	}
+
+### Validates Exclusion Of
+
+	/**
+	 * !ValidatesExclusionOf Fields: (genre), On: (save, insert, update), From: (action, adventure), Message: "is not an acceptable value"
+	 */
+	class Book extends Model {
+
+		/**
+		 * !Label "Book Genre"
+		 */
+	   	public $genre;
+
+	}
+
+### Validates Format Of
+
+	/**
+	 * !ValidatesFormatOf Fields: (isbn), On: (save, insert, update), With: @^[a-zA-Z0-9]+$@, Message: "is not a valid format"
+	 */
+	class Book extends Model {
+
+		/**
+		 * !Label "Book ISBN Code"
+		 */
+	   	public $isbn;
+
+	}
+
+## Example Controller Code
+
+	/**
+	 * !Route POST, books
+	 */
+	function create() {
+		$this->book = new Book($this->request->data('book'));
+		if( $this->book->save() ) {
+			//Success
+		} else {
+			$this->errors = $this->book->errors;
+			return $this->ok('submit_form');
+		}
+	}
+
+## Custom Error Messages
+
+You can define custom error messages per validator. You define a custom validator message like this:
+
+	/**
+	 * !ValidatesPresenceOf Fields: (foo), On: (save), Message: "is required"
+	 */
+	class MyModel extends Model {
+		public $foo;
+	}
+
+Properties that do not validate will have the error message:
+
+	[Field Name or Label] [message]
+	
+The field name or label will be the name of the field, or the label of the field if the label is defined as an annotation on the instance property (see below). The field name or label will be followed by the message you defined in the Validator (or a default message if you did not specify one). The final message would look like:
+
+	Book ISBN Code is required.
+	
+## Custom Property Labels
+
+When a field does not validate, an error message is created for the field. Let's use the following example code:
+
+	/**
+	 * !ValidatesPresenceOf Fields: (foo), On: (save), Message: "is required"
+	 */
+	class MyModel extends Model {
+		public $theFoo;
+	}
+	
+If the `theFoo` property does not exist, the `MyModel` object will not validate. The resultant error messgae will be:
+
+	theFoo is required
+	
+This may not look correct in your web application. To use a custom label for this property, you can use the `Label` annotation on the instance property.
+
+	/**
+	 * !ValidatesPresenceOf Fields: (foo), On: (save), Message: "is required"
+	 */
+	class MyModel extends Model {
+		/**
+		 * !Label "The Foo"
+		 */
+		public $theFoo;
+	}
+	
+If the `theFoo` property fails validation, the resultant error message is now:
+
+	The Foo is required
+
+This looks much better.
