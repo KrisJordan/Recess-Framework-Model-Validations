@@ -60,18 +60,23 @@ Library::import('ValidationPlugin.wrappers.ValidatesInclusionOfWrapper');
 // - This field is required
 // - Accepts a comma delimited list of values
 //
+// Message:
+// - This field is optional
+// - Accepts a string value
+// - Default "is not an acceptable value"
+//
 // @author Josh Lockhart <info@joshlockhart.com>
 // @since Version 1.0
 //
 class ValidatesInclusionOfAnnotation extends ValidatesAnnotation {
 		
 	public function usage() {
-		return '!ValidatesInclusionOf Fields: (category), On: (insert, update), In: (cakes, pies, candies)';		
+		return '!ValidatesInclusionOf Fields: (category), On: (insert, update), In: (cakes, pies, candies), Message: "is not an acceptable value"';		
 	}
 	
 	protected function validate($class) {
 		$this->acceptsNoKeylessValues();
-		$this->acceptedKeys(array('fields','on', 'in'));
+		$this->acceptedKeys(array('fields','on', 'in', 'message'));
 		$this->requiredKeys(array('fields', 'in'));
 		$this->validOnSubclassesOf($class,'Model');
 	}
@@ -81,7 +86,8 @@ class ValidatesInclusionOfAnnotation extends ValidatesAnnotation {
 		foreach( $validateMethods as $method ) {
 			$method = strtolower($method);
 			if( in_array($method, $this->validMethods) ) {
-				$descriptor->addWrapper($method, new ValidatesWrapper(array('ValidatesInclusionOfWrapper::validate', array($this->fields, $this->in))));
+				$message = ( isset($this->message) ) ? $this->message : 'is not an acceptable value';
+				$descriptor->addWrapper($method, new ValidatesWrapper(array('ValidatesInclusionOfWrapper::validate', array($this->fields, $message, $this->in))));
 			}
 		}
 		return $descriptor;

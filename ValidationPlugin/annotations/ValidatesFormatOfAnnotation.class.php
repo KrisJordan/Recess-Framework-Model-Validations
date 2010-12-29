@@ -77,7 +77,7 @@ class ValidatesFormatOfAnnotation extends ValidatesAnnotation {
 	
 	protected function validate($class) {
 		$this->acceptsNoKeylessValues();
-		$this->acceptedKeys(array('fields','on', 'with'));
+		$this->acceptedKeys(array('fields','on', 'with', 'message'));
 		$this->requiredKeys(array('fields', 'with'));
 		$this->validOnSubclassesOf($class,'Model');
 	}
