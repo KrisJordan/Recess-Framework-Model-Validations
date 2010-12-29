@@ -51,7 +51,7 @@ abstract class ValidatesAnnotation extends Annotation {
 	
 	protected function validate($class) {
 		$this->acceptsNoKeylessValues();
-		$this->acceptedKeys(array('fields','on'));
+		$this->acceptedKeys(array('fields','on','message'));
 		$this->requiredKeys(array('fields'));
 		$this->validOnSubclassesOf($class,'Model');
 	}
