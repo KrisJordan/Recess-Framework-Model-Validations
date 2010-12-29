@@ -37,16 +37,17 @@
  *
  * @param Model $object The Model being validated
  * @param array $fields An array of field names to be validated
+ * @param string $message The error message to display if validation fails
  * @return void
  * @author Josh Lockhart <info@joshlockhart.com>
  * @since Version 1.0
  */
 class ValidatesPresenceOfWrapper extends ValidatesWrapper {
 	
-	public static function validate( $object, $fields ) {
+	public static function validate( $object, $fields, $message ) {
 		foreach( $fields as $fieldName ) {
 			if( !isset($object->$fieldName) || empty($object->$fieldName) ) {
-				$object->errors[] = Inflector::toProperCaps($fieldName) . " is required.";
+				$object->errors[] = Inflector::toProperCaps($fieldName) . ' ' . $message;
 			}
 		}
 	}

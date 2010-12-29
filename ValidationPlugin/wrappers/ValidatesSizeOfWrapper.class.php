@@ -39,6 +39,7 @@
  *
  * @param Model $object The Model being validated
  * @param array $fields An array of field names to be validated
+ * @param string $message The error message to display if validation fails
  * @param int $min The minimum size (optional)
  * @param int $max The maximum size (optional)
  * @return void
@@ -47,15 +48,12 @@
  */
 class ValidatesSizeOfWrapper extends ValidatesWrapper {
 	
-	public static function validate( $object, $fields, $min = null, $max = null ) {
+	public static function validate( $object, $fields, $message, $min = null, $max = null ) {
 		foreach( $fields as $fieldName ) {
 			if( isset($object->$fieldName) && ( is_string($object->$fieldName) || is_numeric($object->$fieldName) ) ) {
 				$length = is_string($object->$fieldName) ? strlen($object->$fieldName) : $object->$fieldName;
-				if( !is_null($min) && $length < intval($min) ) {
-					$object->errors[] = Inflector::toProperCaps($fieldName) . " must be greater than $min in size.";
-				}
-				if( !is_null($max) && $length > intval($max) ) {
-					$object->errors[] = Inflector::toProperCaps($fieldName) . " must be less than $max in size.";
+				if( ( !is_null($min) && $length < intval($min) ) || ( !is_null($max) && $length > intval($max) ) ) {
+					$object->errors[] = Inflector::toProperCaps($fieldName) . ' ' . $message;
 				}
 			}
 		}

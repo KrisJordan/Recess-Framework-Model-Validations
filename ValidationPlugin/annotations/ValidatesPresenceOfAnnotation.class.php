@@ -57,13 +57,18 @@ Library::import('ValidationPlugin.wrappers.ValidatesPresenceOfWrapper');
 // - This key is required
 // - Accepts a comma delimited list of Model actions (save, update, insert)
 //
+// Message:
+// - This field is optional
+// - Accepts a string value
+// - Default "cannot be empty"
+//
 // @author Josh Lockhart <info@joshlockhart.com>
 // @since Version 1.0
 //
 class ValidatesPresenceOfAnnotation extends ValidatesAnnotation {
 		
 	public function usage() {
-		return '!ValidatesPresenceOf Fields: (one, two, three), On: (insert, update, delete)';		
+		return '!ValidatesPresenceOf Fields: (one, two, three), On: (insert, update, delete), Message: "cannot be empty"';		
 	}
 	
 	protected function expand($class, $reflection, $descriptor) {
@@ -71,7 +76,8 @@ class ValidatesPresenceOfAnnotation extends ValidatesAnnotation {
 		foreach( $validateMethods as $method ) {
 			$method = strtolower($method);
 			if( in_array($method, $this->validMethods) ) {
-				$descriptor->addWrapper($method, new ValidatesWrapper(array('ValidatesPresenceOfWrapper::validate', array($this->fields))));
+				$message = ( isset($this->message) ) ? $this->message : 'cannot be empty';
+				$descriptor->addWrapper($method, new ValidatesWrapper(array('ValidatesPresenceOfWrapper::validate', array($this->fields, $message))));
 			}
 		}
 		return $descriptor;

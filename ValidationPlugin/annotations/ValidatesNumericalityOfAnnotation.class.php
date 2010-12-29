@@ -56,13 +56,18 @@ Library::import('ValidationPlugin.wrappers.ValidatesNumericalityOfWrapper');
 // - This key is required
 // - Accepts a comma delimited list of Model actions (save, update, insert)
 //
+// Message:
+// - This field is optional
+// - Accepts a string value
+// - Default "must be numeric"
+//
 // @author Josh Lockhart <info@joshlockhart.com>
 // @since Version 1.0
 //
 class ValidatesNumericalityOfAnnotation extends ValidatesAnnotation {
 		
 	public function usage() {
-		return '!ValidatesNumericalityOf Fields: (one, two, three), On: (insert, update)';		
+		return '!ValidatesNumericalityOf Fields: (one, two, three), On: (insert, update), Message: "must be numeric"';		
 	}
 	
 	protected function expand($class, $reflection, $descriptor) {
@@ -70,7 +75,8 @@ class ValidatesNumericalityOfAnnotation extends ValidatesAnnotation {
 		foreach( $validateMethods as $method ) {
 			$method = strtolower($method);
 			if( in_array($method, $this->validMethods) ) {
-				$descriptor->addWrapper($method, new ValidatesWrapper(array('ValidatesNumericalityOfWrapper::validate', array($this->fields))));
+				$message = ( isset($this->message) ) ? $this->message : 'must be numeric';
+				$descriptor->addWrapper($method, new ValidatesWrapper(array('ValidatesNumericalityOfWrapper::validate', array($this->fields, $message))));
 			}
 		}
 		return $descriptor;

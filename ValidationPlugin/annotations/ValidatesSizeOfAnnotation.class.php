@@ -66,18 +66,23 @@ Library::import('ValidationPlugin.wrappers.ValidatesSizeOfWrapper');
 // - This key is optional
 // - This key's value must be an integer
 //
+// Message:
+// - This field is optional
+// - Accepts a string value
+// - Default "is not the correct length"
+//
 // @author Josh Lockhart <info@joshlockhart.com>
 // @since Version 1.0
 //
 class ValidatesSizeOfAnnotation extends ValidatesAnnotation {
 		
 	public function usage() {
-		return '!ValidatesSizeOf Fields: (one, two, three), On: (insert, update), Min: 1, Max: 10';		
+		return '!ValidatesSizeOf Fields: (one, two, three), On: (insert, update), Min: 1, Max: 10, Message: "is not the correct length"';		
 	}
 	
 	protected function validate($class) {
 		$this->acceptsNoKeylessValues();
-		$this->acceptedKeys(array('fields','on', 'min', 'max'));
+		$this->acceptedKeys(array('fields','on', 'min', 'max', 'message'));
 		$this->requiredKeys(array('fields', 'min'));
 		$this->validOnSubclassesOf($class,'Model');
 	}
@@ -87,7 +92,8 @@ class ValidatesSizeOfAnnotation extends ValidatesAnnotation {
 		foreach( $validateMethods as $method ) {
 			$method = strtolower($method);
 			if( in_array($method, $this->validMethods) ) {
-				$descriptor->addWrapper($method, new ValidatesWrapper(array('ValidatesSizeOfWrapper::validate', array($this->fields, $this->min, $this->max))));
+				$message = ( isset($this->message) ) ? $this->message : 'is not the correct length';
+				$descriptor->addWrapper($method, new ValidatesWrapper(array('ValidatesSizeOfWrapper::validate', array($this->fields, $message, $this->min, $this->max))));
 			}
 		}
 		return $descriptor;
