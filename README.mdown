@@ -121,6 +121,20 @@ If any validation fails, the affected Model will not save, insert, or update (wh
 
 	}
 
+### Validates Uniqueness Of
+
+	/**
+	 * !ValidatesUniquenessOf Fields: (title), On: (save, insert, update), Message: "is not unique"
+	 */
+	class Book extends Model {
+
+		/**
+		 * !Label "Book ISBN Code"
+		 */
+	   	public $isbn;
+
+	}
+
 ## Example Controller Code
 
 	/**
@@ -135,7 +149,7 @@ If any validation fails, the affected Model will not save, insert, or update (wh
 			return $this->ok('submit_form');
 		}
 	}
-
+	
 ## Custom Error Messages
 
 You can define custom error messages per validator. You define a custom validator message like this:

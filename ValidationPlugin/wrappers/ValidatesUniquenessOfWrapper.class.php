@@ -30,23 +30,34 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-Library::import('recess.framework.Plugin');
-Library::import('ValidationPlugin.wrappers.ValidatesWrapper');
-Library::import('ValidationPlugin.annotations.ValidatesPresenceOfAnnotation');
-Library::import('ValidationPlugin.annotations.ValidatesNumericalityOfAnnotation');
-Library::import('ValidationPlugin.annotations.ValidatesSizeOfAnnotation');
-Library::import('ValidationPlugin.annotations.ValidatesFormatOfAnnotation');
-Library::import('ValidationPlugin.annotations.ValidatesInclusionOfAnnotation');
-Library::import('ValidationPlugin.annotations.ValidatesExclusionOfAnnotation');
-Library::import('ValidationPlugin.annotations.ValidatesUniquenessOfAnnotation');
-Library::import('ValidationPlugin.annotations.LabelAnnotation');
-
 /**
- * Validation Plugin
+ * Validates Uniqueness Of
  *
+ * This wrapper ensures each field value is unique. This incurs one database
+ * query per validated field.
+ *
+ * @param Model $object The Model being validated
+ * @param array $fields An array of field names to be validated
+ * @param string $message The error message to display if validation fails
+ * @return void
  * @author Josh Lockhart <info@joshlockhart.com>
  * @since Version 1.0
  */
-class ValidationPlugin {}
+class ValidatesUniquenessOfWrapper extends ValidatesWrapper {
+	
+	public static function validate( $object, $fields, $message ) {
+		foreach( $fields as $fieldName ) {
+			if( isset($object->$fieldName) ) {
+			    $objClass = get_class($object);
+			    $objQuery = Make::a($objClass)->equal($fieldName, $object->$fieldName);
+			    $objIsNotUnique = isset($object->id) ? $objQuery->notEqual('id', $object->id)->exists() : $objQuery->exists();
+			    if ( $objIsNotUnique ) {
+			        $object->errors[] = self::labelForObjectProperty($object, $fieldName) . ' ' . $message;
+			    }
+			}
+		}
+	}
+	
+}
 
 ?>
